@@ -33,6 +33,23 @@
 #include "openclwrapper.h"
 #include "osdetect.h"
 
+#if defined(HAVE_TIFFIO_H) && defined(_WIN32)
+
+#include <tiffio.h>
+#include <windows.h>
+
+static void Win32WarningHandler(const char* module, const char* fmt,
+                                va_list ap) {
+    if (module != NULL) {
+        fprintf(stderr, "%s: ", module);
+    }
+    fprintf(stderr, "Warning, ");
+    vfprintf(stderr, fmt, ap);
+    fprintf(stderr, ".\n");
+}
+
+#endif /* HAVE_TIFFIO_H &&  _WIN32 */
+
 void PrintVersionInfo() {
     char *versionStrP;
 
@@ -71,7 +88,7 @@ void PrintVersionInfo() {
 }
 
 void PrintUsage(const char* program) {
-  fprintf(stderr,
+  printf(
       "Usage:\n"
       "  %s --help | --help-psm | --version\n"
       "  %s --list-langs [--tessdata-dir PATH]\n"
@@ -105,7 +122,7 @@ void PrintHelpForPSM() {
         #endif
         ;
 
-  fprintf(stderr, "%s", msg);
+  printf("%s", msg);
 }
 
 void PrintHelpMessage(const char* program) {
@@ -123,7 +140,7 @@ void PrintHelpMessage(const char* program) {
       "NOTE: These options must occur before any configfile.\n"
      ;
 
-  fprintf(stderr, "\n%s\n", ocr_options);
+  printf("\n%s\n", ocr_options);
   PrintHelpForPSM();
 
   const char *single_options =
@@ -135,7 +152,7 @@ void PrintHelpMessage(const char* program) {
       "  --print-parameters    Print tesseract parameters to stdout.\n"
       ;
 
-  fprintf(stderr, "\n%s", single_options);
+  printf("\n%s", single_options);
 }
 
 void SetVariablesFromCLArgs(tesseract::TessBaseAPI* api, int argc, char** argv) {
@@ -164,11 +181,10 @@ void SetVariablesFromCLArgs(tesseract::TessBaseAPI* api, int argc, char** argv) 
 void PrintLangsList(tesseract::TessBaseAPI* api) {
   GenericVector<STRING> languages;
   api->GetAvailableLanguagesAsVector(&languages);
-  fprintf(stderr, "List of available languages (%d):\n",
-          languages.size());
+  printf("List of available languages (%d):\n", languages.size());
   for (int index = 0; index < languages.size(); ++index) {
     STRING& string = languages[index];
-    fprintf(stderr, "%s\n", string.string());
+    printf("%s\n", string.string());
   }
   api->End();
 }
@@ -342,6 +358,8 @@ void PreloadRenderers(tesseract::TessBaseAPI* api,
  *  main()
  *
  **********************************************************************/
+
+
 int main(int argc, char **argv) {
   const char* lang = "eng";
   const char* image = NULL;
@@ -349,9 +367,18 @@ int main(int argc, char **argv) {
   const char* datapath = NULL;
   bool list_langs = false;
   bool print_parameters = false;
-  GenericVector<STRING> vars_vec, vars_values;
   int arg_i = 1;
   tesseract::PageSegMode pagesegmode = tesseract::PSM_AUTO;
+  /* main() calls functions like ParseArgs which call exit().
+   * This results in memory leaks if vars_vec and vars_values are
+   * declared as auto variables (destructor is not called then). */
+  static GenericVector<STRING> vars_vec;
+  static GenericVector<STRING> vars_values;
+
+#if defined(HAVE_TIFFIO_H) && defined(_WIN32)
+  /* Show libtiff warnings on console (not in GUI). */
+  TIFFSetWarningHandler(Win32WarningHandler);
+#endif /* HAVE_TIFFIO_H &&  _WIN32 */
 
   ParseArgs(argc, argv,
           &lang, &image, &outputbase, &datapath,
