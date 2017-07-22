@@ -29,6 +29,10 @@
 #include "tprintf.h"
 #include "unichar.h"
 
+// TODO(rays) Move UNICHARSET to tesseract namespace.
+using tesseract::char32;
+using tesseract::UNICHAR;
+
 // Special character used in representing character fragments.
 static const char kSeparator = '|';
 // Special character used in representing 'natural' character fragments.
@@ -906,6 +910,8 @@ void UNICHARSET::post_load_setup() {
   han_sid_ = get_script_id_from_name("Han");
   hiragana_sid_ = get_script_id_from_name("Hiragana");
   katakana_sid_ = get_script_id_from_name("Katakana");
+  thai_sid_ = get_script_id_from_name("Thai");
+  hangul_sid_ = get_script_id_from_name("Hangul");
 
   // Compute default script. Use the highest-counting alpha script, that is
   // not the common script, as that still contains some "alphas".
@@ -988,12 +994,9 @@ bool UNICHARSET::AnyRepeatedUnicodes() const {
   if (has_special_codes()) start_id = SPECIAL_UNICHAR_CODES_COUNT;
   for (int id = start_id; id < size_used; ++id) {
     // Convert to unicodes.
-    GenericVector<int> unicodes;
-    if (UNICHAR::UTF8ToUnicode(get_normed_unichar(id), &unicodes) &&
-        unicodes.size() > 1) {
-      for (int u = 1; u < unicodes.size(); ++u) {
-        if (unicodes[u - 1] == unicodes[u]) return true;
-      }
+    std::vector<char32> unicodes = UNICHAR::UTF8ToUTF32(get_normed_unichar(id));
+    for (int u = 1; u < unicodes.size(); ++u) {
+      if (unicodes[u - 1] == unicodes[u]) return true;
     }
   }
   return false;
@@ -1007,13 +1010,14 @@ int UNICHARSET::add_script(const char* script) {
   if (script_table_size_reserved == 0) {
     script_table_size_reserved = 8;
     script_table = new char*[script_table_size_reserved];
-  }
-  if (script_table_size_used + 1 >= script_table_size_reserved) {
-    char** new_script_table = new char*[script_table_size_reserved * 2];
-    memcpy(new_script_table, script_table, script_table_size_reserved * sizeof(char*));
+  } else if (script_table_size_used >= script_table_size_reserved) {
+    assert(script_table_size_used == script_table_size_reserved);
+    script_table_size_reserved += script_table_size_reserved;
+    char** new_script_table = new char*[script_table_size_reserved];
+    memcpy(new_script_table, script_table,
+           script_table_size_used * sizeof(char*));
     delete[] script_table;
     script_table = new_script_table;
-      script_table_size_reserved = 2 * script_table_size_reserved;
   }
   script_table[script_table_size_used] = new char[strlen(script) + 1];
   strcpy(script_table[script_table_size_used], script);

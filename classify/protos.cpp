@@ -1,7 +1,7 @@
 /* -*-C-*-
  ********************************************************************************
  *
- * File:        protos.c  (Formerly protos.c)
+ * File:        protos.cpp  (Formerly protos.c)
  * Description:
  * Author:       Mark Seaman, OCR Technology
  * Created:      Fri Oct 16 14:37:00 1987
@@ -28,7 +28,6 @@
 #include "protos.h"
 #include "const.h"
 #include "emalloc.h"
-#include "freelist.h"
 #include "callcpp.h"
 #include "tprintf.h"
 #include "scanutils.h"
@@ -229,12 +228,11 @@ void FreeClassFields(CLASS_TYPE Class) {
   int i;
 
   if (Class) {
-    if (Class->MaxNumProtos > 0)
-      memfree (Class->Prototypes);
+    if (Class->MaxNumProtos > 0) free(Class->Prototypes);
     if (Class->MaxNumConfigs > 0) {
       for (i = 0; i < Class->NumConfigs; i++)
         FreeBitVector (Class->Configurations[i]);
-      memfree (Class->Configurations);
+      free(Class->Configurations);
     }
   }
 }

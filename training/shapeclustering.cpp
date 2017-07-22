@@ -20,7 +20,7 @@
 #include "config_auto.h"
 #endif
 
-#ifndef USE_STD_NAMESPACE
+#ifdef GOOGLE_TESSERACT
 #include "base/commandlineflags.h"
 #endif
 #include "commontraining.h"
@@ -48,8 +48,8 @@ int main(int argc, char **argv) {
   ParseArguments(&argc, &argv);
 
   STRING file_prefix;
-  tesseract::MasterTrainer* trainer = tesseract::LoadTrainingData(
-      argc, argv, false, NULL, &file_prefix);
+  tesseract::MasterTrainer* trainer =
+      tesseract::LoadTrainingData(argc, argv, false, nullptr, &file_prefix);
 
   if (!trainer)
     return 1;

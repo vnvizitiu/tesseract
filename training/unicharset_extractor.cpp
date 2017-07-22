@@ -38,6 +38,8 @@
 #include "unichar.h"
 #include "unicharset.h"
 
+using tesseract::UNICHAR;
+
 static const char* const kUnicharsetFileName = "unicharset";
 
 UNICHAR_ID wc_to_unichar_id(const UNICHARSET &unicharset, int wc) {
@@ -134,7 +136,7 @@ int main(int argc, char** argv) {
     printf("Extracting unicharset from %s\n", argv[tessoptind]);
 
     FILE* box_file = fopen(argv[tessoptind], "rb");
-    if (box_file == NULL) {
+    if (box_file == nullptr) {
       printf("Cannot open box file %s\n", argv[tessoptind]);
       return -1;
     }

@@ -1,7 +1,7 @@
 // Copyright 2011 Google Inc. All Rights Reserved.
 // Author: rays@google.com (Ray Smith)
 ///////////////////////////////////////////////////////////////////////
-// File:        shapeclassifier.h
+// File:        shapeclassifier.cpp
 // Description: Base interface class for classifiers that return a
 //              shape index.
 // Author:      Ray Smith
@@ -176,7 +176,7 @@ void ShapeClassifier::UnicharPrintResults(
   for (int i = 0; i < results.size(); ++i) {
     tprintf("%g: c_id=%d=%s", results[i].rating, results[i].unichar_id,
             GetUnicharset().id_to_unichar(results[i].unichar_id));
-    if (results[i].fonts.size() != 0) {
+    if (!results[i].fonts.empty()) {
       tprintf(" Font Vector:");
       for (int f = 0; f < results[i].fonts.size(); ++f) {
         tprintf(" %d", results[i].fonts[f].fontinfo_id);

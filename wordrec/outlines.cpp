@@ -1,7 +1,7 @@
 /* -*-C-*-
  ********************************************************************************
  *
- * File:        outlines.c  (Formerly outlines.c)
+ * File:         outlines.cpp  (Formerly outlines.c)
  * Description:  Combinatorial Splitter
  * Author:       Mark Seaman, OCR Technology
  * Created:      Thu Jul 27 08:59:01 1989
@@ -24,7 +24,7 @@
  ********************************************************************************
  * Revision 1.2  89/09/15  09:24:41  09:24:41  marks (Mark Seaman)
  * First released version of Combinatorial splitter code
-**/
+ **/
 /*----------------------------------------------------------------------
               I n c l u d e s
 ----------------------------------------------------------------------*/

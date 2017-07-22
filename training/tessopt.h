@@ -1,5 +1,5 @@
 /**********************************************************************
- * File:        getopt.h
+ * File:        tessopt.h
  * Description: Re-implementation of the unix code.
  * Author:					Ray Smith
  * Created:					Tue Nov 28 05:52:50 MST 1995
@@ -17,6 +17,9 @@
  *
  **********************************************************************/
 
+#ifndef TESSERACT_TRAINING_TESSOPT_H_
+#define TESSERACT_TRAINING_TESSOPT_H_
+
 #include          "host.h"
 
 extern int tessoptind;
@@ -27,3 +30,5 @@ inT32 argc,                      //arg count
 char *argv[],                    //args
 const char *arglist                    //string of arg chars
 );
+
+#endif  // TESSERACT_TRAINING_TESSOPT_H_

@@ -264,67 +264,17 @@ void REJ::full_print(FILE *fp) {
     flag (R_MINIMAL_REJ_ACCEPT) ? "T" : "F");
 }
 
-
-//The REJMAP class has been hacked to use alloc_struct instead of new [].
-//This is to reduce memory fragmentation only as it is rather kludgy.
-//alloc_struct by-passes the call to the contsructor of REJ on each
-//array element. Although the constructor is empty, the BITS16 members
-//do have a constructor which sets all the flags to 0. The memset
-//replaces this functionality.
-
-REJMAP::REJMAP(  //classwise copy
-               const REJMAP &source) {
-  REJ *to;
-  REJ *from = source.ptr;
-  int i;
-
-  len = source.length ();
-
-  if (len > 0) {
-    ptr = (REJ *) alloc_struct (len * sizeof (REJ), "REJ");
-    to = ptr;
-    for (i = 0; i < len; i++) {
-      *to = *from;
-      to++;
-      from++;
-    }
-  }
-  else
-    ptr = NULL;
-}
-
-
-REJMAP & REJMAP::operator= (     //assign REJMAP
-const REJMAP & source            //from this
-) {
-  REJ *
-    to;
-  REJ *
-    from = source.ptr;
-  int
-    i;
-
-  initialise (source.len);
-  to = ptr;
-  for (i = 0; i < len; i++) {
-    *to = *from;
-    to++;
-    from++;
+REJMAP &REJMAP::operator=(const REJMAP &source) {
+  initialise(source.len);
+  for (int i = 0; i < len; i++) {
+    ptr[i] = source.ptr[i];
   }
   return *this;
 }
 
-
-void REJMAP::initialise(  //Redefine map
-                        inT16 length) {
-  if (ptr != NULL)
-    free_struct (ptr, len * sizeof (REJ), "REJ");
+void REJMAP::initialise(inT16 length) {
+  ptr.reset(new REJ[length]);
   len = length;
-  if (len > 0)
-    ptr = (REJ *) memset (alloc_struct (len * sizeof (REJ), "REJ"),
-      0, len * sizeof (REJ));
-  else
-    ptr = NULL;
 }
 
 
@@ -365,29 +315,12 @@ BOOL8 REJMAP::quality_recoverable_rejects() {  //Any potential rejs?
 void REJMAP::remove_pos(           //Cut out an element
                         inT16 pos  //element to remove
                        ) {
-  REJ *new_ptr;                  //new, smaller map
-  int i;
-
   ASSERT_HOST (pos >= 0);
   ASSERT_HOST (pos < len);
   ASSERT_HOST (len > 0);
 
   len--;
-  if (len > 0)
-    new_ptr = (REJ *) memset (alloc_struct (len * sizeof (REJ), "REJ"),
-      0, len * sizeof (REJ));
-  else
-    new_ptr = NULL;
-
-  for (i = 0; i < pos; i++)
-    new_ptr[i] = ptr[i];         //copy pre pos
-
-  for (; pos < len; pos++)
-    new_ptr[pos] = ptr[pos + 1]; //copy post pos
-
-                                 //delete old map
-  free_struct (ptr, (len + 1) * sizeof (REJ), "REJ");
-  ptr = new_ptr;
+  for (; pos < len; pos++) ptr[pos] = ptr[pos + 1];
 }
 
 

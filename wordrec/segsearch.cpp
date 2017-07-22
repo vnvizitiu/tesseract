@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////
-// File:        segsearch.h
+// File:        segsearch.cpp
 // Description: Segmentation search functions.
 // Author:      Daria Antonova
 // Created:     Mon Jun 23 11:26:43 PDT 2008
@@ -124,25 +124,6 @@ void Wordrec::SegSearch(WERD_RES* word_res,
             language_model_->AcceptableChoiceFound());
   }
 }
-
-// Setup and run just the initial segsearch on an established matrix,
-// without doing any additional chopping or joining.
-void Wordrec::WordSearch(WERD_RES* word_res) {
-  LMPainPoints pain_points(segsearch_max_pain_points,
-                           segsearch_max_char_wh_ratio,
-                           assume_fixed_pitch_char_segment,
-                           &getDict(), segsearch_debug_level);
-  GenericVector<SegSearchPending> pending;
-  BestChoiceBundle best_choice_bundle(word_res->ratings->dimension());
-  // Run Segmentation Search.
-  InitialSegSearch(word_res, &pain_points, &pending, &best_choice_bundle, NULL);
-  if (segsearch_debug_level > 0) {
-    tprintf("Ending ratings matrix%s:\n",
-            wordrec_enable_assoc ? " (with assoc)" : "");
-    word_res->ratings->print(getDict().getUnicharset());
-  }
-}
-
 
 // Setup and run just the initial segsearch on an established matrix,
 // without doing any additional chopping or joining.

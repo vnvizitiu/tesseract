@@ -34,8 +34,7 @@ FILE* OpenBoxFile(const STRING& fname) {
   STRING filename = BoxFileName(fname);
   FILE* box_file = NULL;
   if (!(box_file = fopen(filename.string(), "rb"))) {
-    CANTOPENFILE.error("read_next_box", TESSEXIT,
-                       "Can't open box file %s",
+    CANTOPENFILE.error("read_next_box", TESSEXIT, "Can't open box file %s",
                        filename.string());
   }
   return box_file;
@@ -56,6 +55,8 @@ bool ReadAllBoxes(int target_page, bool skip_blanks, const STRING& filename,
   GenericVector<char> box_data;
   if (!tesseract::LoadDataFromFile(BoxFileName(filename), &box_data))
     return false;
+  // Convert the array of bytes to a string, so it can be used by the parser.
+  box_data.push_back('\0');
   return ReadMemBoxes(target_page, skip_blanks, &box_data[0], boxes, texts,
                       box_texts, pages);
 }
@@ -205,7 +206,7 @@ bool ParseBoxFileStr(const char* boxfile_str, int* page_number,
   // Validate UTF8 by making unichars with it.
   int used = 0;
   while (used < uch_len) {
-    UNICHAR ch(uch + used, uch_len - used);
+    tesseract::UNICHAR ch(uch + used, uch_len - used);
     int new_used = ch.utf8_len();
     if (new_used == 0) {
       tprintf("Bad UTF-8 str %s starts with 0x%02x at col %d\n",

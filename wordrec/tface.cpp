@@ -1,5 +1,5 @@
 /**********************************************************************
- * File:        tface.c  (Formerly tface.c)
+ * File:        tface.cpp  (Formerly tface.c)
  * Description: C side of the Tess/tessedit C/C++ interface.
  * Author:		Ray Smith
  * Created:		Mon Apr 27 11:57:06 BST 1992
@@ -44,12 +44,16 @@ namespace tesseract {
  * and Dawg models.
  */
 void Wordrec::program_editup(const char *textbase,
-                             bool init_classifier,
-                             bool init_dict) {
+                             TessdataManager *init_classifier,
+                             TessdataManager *init_dict) {
   if (textbase != NULL) imagefile = textbase;
   InitFeatureDefs(&feature_defs_);
   InitAdaptiveClassifier(init_classifier);
-  if (init_dict) getDict().Load(Dict::GlobalDawgCache());
+  if (init_dict) {
+    getDict().SetupForLoad(Dict::GlobalDawgCache());
+    getDict().Load(lang, init_dict);
+    getDict().FinishLoad();
+  }
   pass2_ok_split = chop_ok_split;
 }
 

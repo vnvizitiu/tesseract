@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////
-// File:        ambigs.cc
+// File:        ambigs.cpp
 // Description: Functions for dealing with ambiguities
 //              (training and recognition).
 // Author:      Daria Antonova
@@ -24,13 +24,9 @@
 #include "helpers.h"
 #include "universalambigs.h"
 
-#if defined _WIN32
-#ifndef __GNUC__
-#define strtok_r strtok_s
-#else
-#include "strtok_r.h"
-#endif  /* __GNUC__ */
-#endif  /* _WIN32 */
+#if defined(_WIN32) && !defined(__GNUC__)
+#define strtok_r(str, delim, saveptr) strtok_s(str, delim, saveptr)
+#endif /* _WIN32 && !__GNUC__ */
 
 namespace tesseract {
 
@@ -47,7 +43,7 @@ AmbigSpec::AmbigSpec() {
   wrong_ngram_size = 0;
 }
 
-ELISTIZE(AmbigSpec);
+ELISTIZE(AmbigSpec)
 
 // Initializes the ambigs by adding a NULL pointer to each table.
 void UnicharAmbigs::InitUnicharAmbigs(const UNICHARSET& unicharset,

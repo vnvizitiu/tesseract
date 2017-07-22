@@ -175,7 +175,7 @@ struct EDGEPT {
 };
 
 // For use in chop and findseam to keep a list of which EDGEPTs were inserted.
-CLISTIZEH(EDGEPT);
+CLISTIZEH(EDGEPT)
 
 struct TESSLINE {
   TESSLINE() : is_hole(false), loop(NULL), next(NULL) {}
@@ -436,17 +436,6 @@ struct TWERD {
   GenericVector<TBLOB*> blobs;   // Blobs in word.
   bool latin_script;             // This word is in a latin-based script.
 };
-
-/*----------------------------------------------------------------------
-              M a c r o s
-----------------------------------------------------------------------*/
-/**********************************************************************
- * free_widths
- *
- * Free the memory taken up by a width array.
- **********************************************************************/
-#define free_widths(w)  \
-if (w) memfree (w)
 
 /*----------------------------------------------------------------------
               F u n c t i o n s

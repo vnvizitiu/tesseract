@@ -1,5 +1,5 @@
 /**********************************************************************
- * File:        memry.c  (Formerly memory.c)
+ * File:        memry.cpp  (Formerly memory.c)
  * Description: Memory allocation with builtin safety checks.
  * Author:					Ray Smith
  * Created:					Wed Jan 22 09:43:33 GMT 1992
@@ -36,26 +36,10 @@ void free_string(char *string) {
   free(string);
 }
 
-void* alloc_struct(inT32 count, const char *) {
-  return malloc(count);
-}
-
-void free_struct(void *deadstruct, inT32, const char *) {
-  free(deadstruct);
-}
-
 void *alloc_mem(inT32 count) {
   return malloc(static_cast<size_t>(count));
 }
 
-void *alloc_big_zeros(inT32 count) {
-  return calloc(static_cast<size_t>(count), 1);
-}
-
 void free_mem(void *oldchunk) {
-  free(oldchunk);
-}
-
-void free_big_mem(void *oldchunk) {
   free(oldchunk);
 }

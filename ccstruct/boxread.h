@@ -1,8 +1,8 @@
 /**********************************************************************
- * File:        boxread.cpp
+ * File:        boxread.h
  * Description: Read data from a box file.
- * Author:		Ray Smith
- * Created:		Fri Aug 24 17:47:23 PDT 2007
+ * Author:	Ray Smith
+ * Created:	Fri Aug 24 17:47:23 PDT 2007
  *
  * (C) Copyright 2007, Google Inc.
  ** Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,8 +17,8 @@
  *
  **********************************************************************/
 
-#ifndef TESSERACT_CCUTIL_BOXREAD_H__
-#define TESSERACT_CCUTIL_BOXREAD_H__
+#ifndef TESSERACT_CCUTIL_BOXREAD_H_
+#define TESSERACT_CCUTIL_BOXREAD_H_
 
 #include <stdio.h>
 #include "genericvector.h"
@@ -82,4 +82,4 @@ bool ParseBoxFileStr(const char* boxfile_str, int* page_number,
 void MakeBoxFileStr(const char* unichar_str, const TBOX& box, int page_num,
                     STRING* box_str);
 
-#endif  // TESSERACT_CCUTIL_BOXREAD_H__
+#endif  // TESSERACT_CCUTIL_BOXREAD_H_
